@@ -1,20 +1,22 @@
-name: sports_coaching_board
-description: "A multi-sport tactical coaching board with animation playback for soccer, rugby, futsal, and netball."
-publish_to: 'none'
-version: 1.0.0+1
+name: Deploy Flutter Web
 
-environment:
-  sdk: '>=3.0.0 <4.0.0'
+on:
+  push:
+    branches: [ main ]
 
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: ^1.0.6
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^3.0.0
-
-flutter:
-  uses-material-design: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v4
+        with:
+          flutter-version: '3.x'
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter build web --release --base-href "/CoachingBoardTest/"
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
